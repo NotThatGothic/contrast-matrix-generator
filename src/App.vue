@@ -1,9 +1,9 @@
 <template>
 	<!-- Add color -->
-    <div class="row  mb-3">
+    <div class="row justify-content-between">
 		<AddColor @add-color="addColor" />
 			
-		<div class="col-4 d-flex flex-column justify-content-between ms-auto">
+		<div class="col-auto d-flex flex-column justify-content-between mb-3">
             <h2>Display Options</h2>
 			<form class="form" @submit.prevent>
 				<div class="form-check">
@@ -25,31 +25,33 @@
     <div class="row mb-3">
         <div class="col-12">
             <h2>Current colors</h2>
-            <table class="table table-hover border" v-if="colors.length > 0">
-				<thead>
-					<tr>
-						<th style="width:5ex">ID</th>
-						<th style="width:auto">Color name</th>
-						<th style="width:20ex" class="text-center" v-if="displayOptions.showSample">Color sample</th>
-						<th style="width:auto">Color hexcode</th>
-						<th style="width:auto">Color RGB value</th>
-						<th style="width:auto" v-if="displayOptions.showLum">Color Lum</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr v-for="(color) in colors" :key="color.id" is="vue:ColorRow" :id="color.id" :name="color.colorName" :hex="color.colorHex" :displayOptions="displayOptions" @update-name="updateName" @update-hex="updateHex" @remove-row="removeRow" />
-				</tbody>
-				<tfoot>
-					<tr>
-						<td colspan="100%" class="align-middle text-end">
-							<button type="button" class="close btn btn-danger" aria-label="Close"  @click="colors = []">
-								<span aria-hidden="true">Delete All</span>
-							</button>
-						</td>
-					</tr>
-				</tfoot>
-            </table>
+			<div style="overflow-x: auto;" v-if="colors.length > 0">
+				<table class="table table-hover border">
+					<thead>
+						<tr>
+							<th style="width:5ex">ID</th>
+							<th style="width:auto">Color name</th>
+							<th style="width:20ex" class="text-center" v-if="displayOptions.showSample">Color sample</th>
+							<th style="width:auto">Color hexcode</th>
+							<th style="width:auto">Color RGB value</th>
+							<th style="width:auto" v-if="displayOptions.showLum">Color Lum</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="(color) in colors" :key="color.id" is="vue:ColorRow" :id="color.id" :name="color.colorName" :hex="color.colorHex" :displayOptions="displayOptions" @update-name="updateName" @update-hex="updateHex" @remove-row="removeRow" />
+					</tbody>
+					<tfoot>
+						<tr>
+							<td colspan="100%" class="align-middle text-end">
+								<button type="button" class="close btn btn-danger" aria-label="Close"  @click="colors = []">
+									<span aria-hidden="true">Delete All</span>
+								</button>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
 			<div v-else>
 				<p class="text-muted">Add some colors with the form or load colors from JSON below.</p>
 			</div>
@@ -62,7 +64,7 @@
 				<div class="col">
 					<h2>Contrast table</h2>
 				</div>
-				<div class="col-4 ms-auto mb-3">
+				<div class="col-auto ms-auto mb-3">
 					<div class="accordion" id="accordionOptions">
 						<div class="accordion-item">
 							<h2 class="accordion-header" id="optionsHeading">

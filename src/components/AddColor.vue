@@ -1,6 +1,6 @@
 <template>
 	<!-- Add colors -->
-	<div class="col-auto">
+	<div class="col-auto mb-3">
 		<h2>Add colors</h2>
 		<form class="form row d-flex align-items-end" id="color-form" @submit.prevent="addColor" autocomplete="off">
 			<div class="col-auto">
@@ -12,7 +12,7 @@
 				<input id="new-color-hex" class="form-control" type="text" name="new-color-hex" v-model="newColorHex" required />
 			</div>
 			<div class="col-auto">
-				<button class="btn btn-primary" type="submit" form="color-form">Add Color</button>
+				<button class="btn btn-primary mt-3" type="submit" form="color-form">Add Color</button>
 			</div>
 		</form>
 	</div>
