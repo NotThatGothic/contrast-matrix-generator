@@ -53,29 +53,29 @@
 				</table>
 			</div>
 			<div v-else>
-				<p class="text-muted">Add some colors with the form or load colors from JSON below.</p>
+				<p class="text-muted">Add some colors with the form, import colors from JSON below or <a href="#" @click="defaultData">load some example colors from Bootstrap</a>.</p>
 			</div>
         </div>
     </div>
 	<!-- Contrast table -->
     <div class="row mb-3">
         <div class="col-12">
-			<div class="row">
-				<div class="col">
+			<div class="row justify-content-between">
+				<div class="col-6 mb-3">
 					<h2>Contrast table</h2>
 				</div>
-				<div class="col-auto ms-auto mb-3">
+				<div class="col-auto mb-3">
 					<div class="accordion" id="accordionOptions">
 						<div class="accordion-item">
 							<h2 class="accordion-header" id="optionsHeading">
-								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#optionsCollapse" aria-expanded="false" aria-controls="optionsCollapse">
+								<button class="accordion-button collapsed me-2" type="button" data-bs-toggle="collapse" data-bs-target="#optionsCollapse" aria-expanded="false" aria-controls="optionsCollapse">
 									Contrast table options
 								</button>
 							</h2>
 							<div id="optionsCollapse" class="accordion-collapse collapse" aria-labelledby="optionsHeading" data-bs-parent="#accordionOptions">
 								<div class="accordion-body">
 									<form class="form row" @submit.prevent >
-										<div class="col-auto">
+										<div class="col-auto mb-3">
 											<div class="form-check">
 												<input class="form-check-input" type="radio" value="AAA" id="AAA" v-model="wcagLevel">
 												<label class="form-check-label" for="AAA">
@@ -95,7 +95,7 @@
 												</label>
 											</div>
 										</div>
-										<div class="col-auto">
+										<div class="col-auto mb-3">
 											<div class="form-check">
 												<input class="form-check-input" type="radio" value="defaultResults" id="defaultResults" v-model="resultsRendering">
 												<label class="form-check-label" for="defaultResults">
@@ -213,7 +213,7 @@ export default {
 			wcagLevel: 'AA',
 			resultsRendering: "colorizeResults",
 			exampleText: "Lorem Ipsum dolor sit amet",
-			colors: ColorData,
+			colors: [],
 		}
 	},
 	computed: {
@@ -322,13 +322,16 @@ export default {
 		},
 		loadData(data) {
 			this.colors = JSON.parse(data)
+		},
+		defaultData() {
+			this.colors = ColorData
 		}
 	}
 
 }
 
 function standardizeHex(value) {
-	if (value.startsWith("#")) {
+	if (value.startsWith('#')) {
 		value = value.substring(1, 7);
 	}
 	if (value.length == 3) {
