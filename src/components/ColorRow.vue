@@ -1,5 +1,18 @@
 <template>
-	<tr>
+	<tr v-if="displayOptions.palette">
+		<th class="align-middle">
+			<form class="form" autocomplete="off" @submit.prevent="updateName(rowName)">
+				<input :id="id + 'name'" class="form-control border-0 bg-transparent shadow-none w-auto" type="text" name="color-color-name" v-model="rowName" required />
+			</form>
+		</th>
+		<td class="align-middle text-center p-0"><span style="font-size: 20ex; line-height: 0.5ex;" :style="{ color: rowHex }">■</span></td>
+		<td class="align-middle">
+			<form class="form" autocomplete="off" @submit.prevent="updateHex(rowHex)">
+				<input :id="id + 'colorHex'" class="form-control border-0 bg-transparent shadow-none w-auto" type="text" name="color-color-hex" v-model="rowHex" required />
+			</form>
+		</td>
+	</tr>
+	<tr v-else>
 		<td class="align-middle">{{ id }}</td>
 		<th class="align-middle">
 			<form class="form" autocomplete="off" @submit.prevent="updateName(rowName)">
@@ -16,7 +29,7 @@
 			<form class="form" autocomplete="off" @submit.prevent="updateRGB(rowRGB)">
 				<input :id="id + 'colorRGB'" class="form-control border-0 bg-transparent shadow-none w-auto" type="text" name="color-color-rgb" v-model="rowRGB" required />
 			</form>
-			</td>
+		</td>
 		<td class="align-middle" v-if="displayOptions.showLum" >Lum: {{ lum }}</td>
 		<td class="align-middle text-end">
 			<button type="button" class="close btn btn-danger btn-sm" aria-label="Close"  @click="removeRow()">

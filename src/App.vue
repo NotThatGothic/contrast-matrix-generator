@@ -24,6 +24,12 @@
 						Show Hex on Table
 					</label>
 				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" value="" id="palette" v-model="displayOptions.palette">
+					<label class="form-check-label" for="palette">
+						Palette mode
+					</label>
+				</div>
 			</form>
 		</div>
 	</div>
@@ -31,8 +37,20 @@
     <div class="row mb-3">
         <div class="col-12">
             <h2>Current colors</h2>
-			<div style="overflow-x: auto;" v-if="colors.length > 0">
-				<table class="table table-hover border">
+			<div style="overflow-x: auto; height:100%" v-if="colors.length > 0">
+				<table v-if="displayOptions.palette" class="table table-hover border">
+					<thead>
+						<tr>
+							<th style="width:0">Color name</th>
+							<th style="width:15ex" class="text-center">Color sample</th>
+							<th style="width:auto">Color hexcode</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="(color) in colors" :key="color.id" is="vue:ColorRow" :id="color.id" :name="color.colorName" :hex="color.colorHex" :displayOptions="displayOptions" @update-name="updateName" @update-hex="updateHex" @remove-row="removeRow" />
+					</tbody>
+				</table>
+				<table v-else class="table table-hover border">
 					<thead>
 						<tr>
 							<th style="width:5ex">ID</th>
@@ -216,6 +234,7 @@ export default {
 				showSample: true,
 				showLum: false,
 				showHex: false,
+				palette: false,
 			},
 			wcagLevel: 'AA',
 			resultsRendering: "colorizeResults",
