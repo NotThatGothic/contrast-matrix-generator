@@ -14,6 +14,9 @@
 					placeholder="Hex or RGB" v-model="newColorCode" required />
 			</div>
 			<div class="col-auto">
+				<input id="new-color-code" class="form-control form-control-color" type="color" name="new-color-code" v-model="newColorCode" />
+			</div>
+			<div class="col-auto">
 				<button class="btn btn-primary mt-3" type="submit" form="color-form">Add Color</button>
 			</div>
 		</form>

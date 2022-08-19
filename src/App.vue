@@ -64,7 +64,7 @@
 				<div class="col-6 mb-3">
 					<h2>Contrast table</h2>
 				</div>
-				<div class="col-auto mb-3">
+				<div class="col-4 mb-3">
 					<div class="accordion" id="accordionOptions">
 						<div class="accordion-item">
 							<h2 class="accordion-header" id="optionsHeading">
