@@ -18,6 +18,12 @@
 						Show Luminosity
 					</label>
 				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" value="" id="showHex" v-model="displayOptions.showHex">
+					<label class="form-check-label" for="showHex">
+						Show Hex on Table
+					</label>
+				</div>
 			</form>
 		</div>
 	</div>
@@ -142,12 +148,12 @@
 									<br />
 								</template>
 							</td>
-							<th v-for="(color) in colors" :key="color.id">{{ color.colorName }} <span v-if="displayOptions.showSample" :style="{ color: '#' + color.colorHex }">■</span></th>
+							<th v-for="(color) in colors" :key="color.id">{{ color.colorName }} <span v-if="displayOptions.showSample" :style="{ color: '#' + color.colorHex }">■</span> <span class="text-muted fw-normal" v-if="displayOptions.showHex"> <br> #{{ color.colorHex }}</span></th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr v-for="(colorCol) in colors" :key="colorCol.id">
-							<th>{{ colorCol.colorName }} <span v-if="displayOptions.showSample" :style="{ color: '#' + colorCol.colorHex }">■</span></th>
+							<th>{{ colorCol.colorName }} <span v-if="displayOptions.showSample" :style="{ color: '#' + colorCol.colorHex }">■</span>  <span class="text-muted fw-normal" v-if="displayOptions.showHex"> <br> #{{ colorCol.colorHex }}</span></th>
 							<template v-for="(colorRow) in colors" :key="colorRow.id">
 								<td v-if="resultsRendering == 'renderResults'" :style="{ color: '#' + colorCol.colorHex, background: '#' + colorRow.colorHex}">
 									{{ exampleText }}
@@ -208,7 +214,8 @@ export default {
 		return {
 			displayOptions: {
 				showSample: true,
-				showLum: false
+				showLum: false,
+				showHex: false,
 			},
 			wcagLevel: 'AA',
 			resultsRendering: "colorizeResults",
