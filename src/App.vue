@@ -18,12 +18,7 @@
 						Show Luminosity
 					</label>
 				</div>
-				<div class="form-check">
-					<input class="form-check-input" type="checkbox" value="" id="showHex" v-model="displayOptions.showHex">
-					<label class="form-check-label" for="showHex">
-						Show Hex on Table
-					</label>
-				</div>
+				
 				<div class="form-check">
 					<input class="form-check-input" type="checkbox" value="" id="palette" v-model="displayOptions.palette">
 					<label class="form-check-label" for="palette">
@@ -38,18 +33,9 @@
         <div class="col-12">
             <h2>Current colors</h2>
 			<div style="overflow-x: auto; height:100%" v-if="colors.length > 0">
-				<table v-if="displayOptions.palette" class="table table-hover border">
-					<thead>
-						<tr>
-							<th style="width:0">Color name</th>
-							<th style="width:15ex" class="text-center">Color sample</th>
-							<th style="width:auto">Color hexcode</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr v-for="(color) in colors" :key="color.id" is="vue:ColorRow" :id="color.id" :name="color.colorName" :hex="color.colorHex" :displayOptions="displayOptions" @update-name="updateName" @update-hex="updateHex" @remove-row="removeRow" />
-					</tbody>
-				</table>
+				<div v-if="displayOptions.palette" class="d-flex flex-wrap">
+					<div v-for="(color) in colors" :key="color.id" is="vue:ColorRow" :id="color.id" :name="color.colorName" :hex="color.colorHex" :displayOptions="displayOptions" @update-name="updateName" @update-hex="updateHex" @remove-row="removeRow" />
+				</div>
 				<table v-else class="table table-hover border">
 					<thead>
 						<tr>
@@ -88,7 +74,7 @@
 				<div class="col-6 mb-3">
 					<h2>Contrast table</h2>
 				</div>
-				<div class="col-4 mb-3">
+				<div class="col-5 mb-3">
 					<div class="accordion" id="accordionOptions">
 						<div class="accordion-item">
 							<h2 class="accordion-header" id="optionsHeading">
@@ -98,8 +84,17 @@
 							</h2>
 							<div id="optionsCollapse" class="accordion-collapse collapse" aria-labelledby="optionsHeading" data-bs-parent="#accordionOptions">
 								<div class="accordion-body">
+
 									<form class="form row" @submit.prevent >
-										<div class="col-auto mb-3">
+										<div class="col-6 py-2">
+											<div class="form-check">
+												<input class="form-check-input" type="checkbox" value="" id="showHex" v-model="displayOptions.showHex">
+												<label class="form-check-label" for="showHex">
+													Show Hex on Table
+												</label>
+											</div>
+										</div>
+										<div class="col-6 py-2">
 											<div class="form-check">
 												<input class="form-check-input" type="radio" value="AAA" id="AAA" v-model="wcagLevel">
 												<label class="form-check-label" for="AAA">
@@ -119,31 +114,42 @@
 												</label>
 											</div>
 										</div>
-										<div class="col-auto mb-3">
+										<div class="col-6 py-2">
 											<div class="form-check">
-												<input class="form-check-input" type="radio" value="defaultResults" id="defaultResults" v-model="resultsRendering">
-												<label class="form-check-label" for="defaultResults">
-													Default results
+												<input class="form-check-input" type="checkbox" value="" id="showValues" v-model="displayOptions.showValues" :disabled="resultsRendering == 'renderResults'">
+												<label class="form-check-label" for="showValues">
+													Show Values
 												</label>
 											</div>
+										</div>
+										<div class="col-6 py-2" v-if="displayOptions.showValues">
+											<label for="example-text" class="form-label">Level of Accuracy</label>
+											<input id="example-text" class="form-control w-50" type="number" min="1" name="levelOfAccuracy" v-model="levelOfAccuracy" />
+										</div>
+										<div class="w-100"></div>
+										<div class="col-6 py-2">
 											<div class="form-check">
-												<input class="form-check-input" type="radio" value="colorizeResults" id="colorizeResults" v-model="resultsRendering" checked>
+												<input class="form-check-input" type="radio" value="colorizeResults" id="colorizeResults" v-model="resultsRendering">
 												<label class="form-check-label" for="colorizeResults">
 													Colorize results
 												</label>
 											</div>
 											<div class="form-check">
-												<input class="form-check-input" type="radio" value="renderResults" id="renderResults" v-model="resultsRendering">
+												<input class="form-check-input" type="radio" value="defaultResults" id="defaultResults" v-model="resultsRendering">
+												<label class="form-check-label" for="defaultResults">
+													B & W results
+												</label>
+											</div>
+											<div class="form-check">
+												<input class="form-check-input" type="radio" value="renderResults" id="renderResults" v-model="resultsRendering" :disabled="displayOptions.showValues">
 												<label class="form-check-label" for="renderResults">
 													Render results
 												</label>
 											</div>
 										</div>
-										<div class="col-auto">
-											<div v-if="resultsRendering == 'renderResults'">
-												<label for="example-text" class="form-label">Example Text</label>
-												<input id="example-text" class="form-control" type="text" name="example-text" v-model="exampleText" />
-											</div>
+										<div class="col-12 py-2"  v-if="resultsRendering == 'renderResults'">
+											<label for="example-text" class="form-label">Example Text</label>
+											<input id="example-text" class="form-control" type="text" name="example-text" v-model="exampleText" />
 										</div>
 									</form>
 								</div>
@@ -177,20 +183,8 @@
 									{{ exampleText }}
 								</td>
 								<template v-else>
-									<td v-if="calculateContrast(colorCol.colorLum, colorRow.colorLum) == 3" :style="matrixStyles(3)">
-										{{ formatContrastResult(calculateContrast(colorCol.colorLum, colorRow.colorLum)) }}
-									</td>
-									<td v-else-if="calculateContrast(colorCol.colorLum, colorRow.colorLum) == 2" :style="matrixStyles(2)">
-										{{ formatContrastResult(calculateContrast(colorCol.colorLum, colorRow.colorLum)) }}
-									</td>
-									<td v-else-if="calculateContrast(colorCol.colorLum, colorRow.colorLum) == 1" :style="matrixStyles(1)">
-										{{ formatContrastResult(calculateContrast(colorCol.colorLum, colorRow.colorLum)) }}
-									</td>
-									<td v-else-if="calculateContrast(colorCol.colorLum, colorRow.colorLum) == 0" :style="matrixStyles(0)">
-										{{ formatContrastResult(calculateContrast(colorCol.colorLum, colorRow.colorLum)) }}
-									</td>
-									<td v-else :style="matrixStyles(-1)">
-										{{ formatContrastResult(calculateContrast(colorCol.colorLum, colorRow.colorLum)) }}
+									<td  :style="matrixStyles(calculateContrast(colorCol.colorLum, colorRow.colorLum))">
+										{{ calculateContrast(colorCol.colorLum, colorRow.colorLum) }}:1
 									</td>
 								</template>
 							</template>
@@ -234,11 +228,13 @@ export default {
 				showSample: true,
 				showLum: false,
 				showHex: false,
+				showValues: false,
 				palette: false,
 			},
 			wcagLevel: 'AA',
 			resultsRendering: "colorizeResults",
 			exampleText: "Lorem Ipsum dolor sit amet",
+			levelOfAccuracy: 3,
 			colors: [],
 		}
 	},
@@ -282,62 +278,51 @@ export default {
 			var ratio = lum1 > lum2 
 			? ((lum2 + 0.05) / (lum1 + 0.05))
 			: ((lum1 + 0.05) / (lum2 + 0.05))
-			if (ratio <= 1/7) {
-				return 3
-			} else if (ratio <= 1/4.5) {
-				return 2
-			} else if (ratio <= 1/3) {
-				return 1
-			} else if (ratio < 1) {
-				return 0
+			if (this.displayOptions.showValues == true) {
+				return Math.floor((1 / ratio) * (10**this.levelOfAccuracy)) / (10**this.levelOfAccuracy)
 			} else {
-				return -1
-			}
-		},
-		formatContrastResult(contrastResult) {
-			if (contrastResult == 3) {
-				return "7:1"
-			} else if (contrastResult == 2) {
-				return "4.5:1"
-			} else if (contrastResult == 1) {
-				if (this.wcagLevel == 'AAA') {
-				return "Fail"
+				if (ratio <= 1/7) {
+					return "7"
+				} else if (ratio <= 1/4.5) {
+					return "4.5"
+				} else if (ratio <= 1/3) {
+					if (this.wcagLevel == 'AAA') {
+					return "Fail"
+					} else {
+					return "3"
+					}
+				} else if (ratio < 1) {
+					return "Fail"
 				} else {
-				return "3:1"
+					return " "
 				}
-			} else if (contrastResult == 0) {
-				return "Fail"
-			} else {
-				return " "
 			}
 		},
 		matrixStyles(success) {
 			if (this.resultsRendering == 'colorizeResults') {
-				if (success == -1 ) {
+				if (success == " " || success == 1) {
 					return { background: '' }
 				} else {
 					if (this.wcagLevel == 'AAA') {
-						if (success >= 3) {
+						if (success >= 7) {
 							return { background: '#0f03' }
-						}	else if (success == 2) {
+						}	else if (success >= 4.5) {
 							return { background: '#ff03' }
-						} else {
+						}	else {
 							return { background: '#f113' }
 						}
 					} else if (this.wcagLevel == 'AA') {
-						if (success >= 2) {
+						if (success >= 4.5) {
 							return { background: '#0f03' }
-						}	else if (success == 1) {
+						}	else if (success >= 3) {
 							return { background: '#ff03' }
-						} else {
+						}	else {
 							return { background: '#f113' }
 						}
 					} else {
-						if (success >= 1) {
+						if (success >= 3) {
 							return { background: '#0f03' }
-						}	else if (success == 0) {
-							return { background: '#ff03' }
-						} else {
+						}   else {
 							return { background: '#f113' }
 						}
 					}
@@ -346,6 +331,7 @@ export default {
 				return { background: '' }
 			}
 		},
+		
 		loadData(data) {
 			this.colors = JSON.parse(data)
 		},

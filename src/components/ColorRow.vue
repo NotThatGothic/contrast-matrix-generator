@@ -1,17 +1,11 @@
 <template>
-	<tr v-if="displayOptions.palette">
-		<th class="align-middle">
-			<form class="form" autocomplete="off" @submit.prevent="updateName(rowName)">
-				<input :id="id + 'name'" class="form-control border-0 bg-transparent shadow-none w-auto" type="text" name="color-color-name" v-model="rowName" required />
-			</form>
-		</th>
-		<td class="align-middle text-center p-0"><span style="font-size: 20ex; line-height: 0.5ex;" :style="{ color: rowHex }">■</span></td>
-		<td class="align-middle">
-			<form class="form" autocomplete="off" @submit.prevent="updateHex(rowHex)">
-				<input :id="id + 'colorHex'" class="form-control border-0 bg-transparent shadow-none w-auto" type="text" name="color-color-hex" v-model="rowHex" required />
-			</form>
-		</td>
-	</tr>
+	<div v-if="displayOptions.palette" class="text-center p-2 border">
+				<p class="mb-0 "> {{rowName}} </p>
+				<p class="mb-0 text-muted"> {{rowHex}} </p>
+				<div style="top: -50px; position: relative; margin-bottom: -50px; z-index: -1;">
+					<p  class="mb-0" style="font-size: 150px; line-height:1" :style="{ color: rowHex }">■</p>
+				</div>
+	</div>
 	<tr v-else>
 		<td class="align-middle">{{ id }}</td>
 		<th class="align-middle">
@@ -22,12 +16,12 @@
 		<td class="align-middle text-center" v-if="displayOptions.showSample" ><span style="font-size: 5ex; line-height: 1ex;" :style="{ color: rowHex }">■</span></td>
 		<td class="align-middle">
 			<form class="form" autocomplete="off" @submit.prevent="updateHex(rowHex)">
-				<input :id="id + 'colorHex'" class="form-control border-0 bg-transparent shadow-none w-auto" type="text" name="color-color-hex" v-model="rowHex" required />
+				<input :id="id + 'colorHex'" class="form-control border-0 bg-transparent shadow-none w-auto text-muted" type="text" name="color-color-hex" v-model="rowHex" required />
 			</form>
 		</td>
 		<td class="align-middle">
 			<form class="form" autocomplete="off" @submit.prevent="updateRGB(rowRGB)">
-				<input :id="id + 'colorRGB'" class="form-control border-0 bg-transparent shadow-none w-auto" type="text" name="color-color-rgb" v-model="rowRGB" required />
+				<input :id="id + 'colorRGB'" class="form-control border-0 bg-transparent shadow-none w-auto text-muted" type="text" name="color-color-rgb" v-model="rowRGB" required />
 			</form>
 		</td>
 		<td class="align-middle" v-if="displayOptions.showLum" >Lum: {{ lum }}</td>
