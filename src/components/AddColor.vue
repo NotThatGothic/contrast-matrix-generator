@@ -1,6 +1,6 @@
 <template>
 	<!-- Add colors -->
-	<div class="col-auto mb-3">
+	<div class="col-auto mb-5 mb-lg-3">
 		<h2>Add colors</h2>
 		<form class="form row d-flex align-items-end" id="color-form" @submit.prevent="addColor" autocomplete="off">
 			<div class="col-auto">

@@ -3,7 +3,7 @@
     <div class="row justify-content-between">
 		<AddColor @add-color="addColor" />
 			
-		<div class="col-auto d-flex flex-column justify-content-between mb-3">
+		<div class="col-auto d-flex flex-column justify-content-between mb-5 mb-lg-3">
             <h2>Display Options</h2>
 			<form class="form" @submit.prevent>
 				<div class="form-check">
@@ -29,7 +29,7 @@
 		</div>
 	</div>
 	<!-- Current colors -->
-    <div class="row mb-3">
+    <div class="row mb-5 mb-lg-3">
         <div class="col-12">
             <h2>Current colors</h2>
 			<div style="overflow-x: auto; height:100%" v-if="colors.length > 0">
@@ -68,13 +68,13 @@
         </div>
     </div>
 	<!-- Contrast table -->
-    <div class="row mb-3">
+    <div class="row mb-5 mb-lg-3">
         <div class="col-12">
 			<div class="row justify-content-between">
 				<div class="col-6 mb-3">
 					<h2>Contrast table</h2>
 				</div>
-				<div class="col-5 mb-3">
+				<div class="col-6 col-lg-4 mb-3">
 					<div class="accordion" id="accordionOptions">
 						<div class="accordion-item">
 							<h2 class="accordion-header" id="optionsHeading">
@@ -163,14 +163,7 @@
 					<thead>
 						<tr>
 							<td>
-								<template v-if="resultsRendering == 'renderResults'">
-									<span>Bg color (Row)</span>
-									<br />
-									<span>Fg color (Column)</span>
-								</template>
-								<template v-else>
-									<br />
-								</template>
+								<br />
 							</td>
 							<th v-for="(color) in colors" :key="color.id">{{ color.colorName }} <span v-if="displayOptions.showSample" :style="{ color: '#' + color.colorHex }">■</span> <span class="text-muted fw-normal" v-if="displayOptions.showHex"> <br> #{{ color.colorHex }}</span></th>
 						</tr>
@@ -184,7 +177,7 @@
 								</td>
 								<template v-else>
 									<td  :style="matrixStyles(calculateContrast(colorCol.colorLum, colorRow.colorLum))">
-										{{ calculateContrast(colorCol.colorLum, colorRow.colorLum) }}:1
+										{{ calculateContrast(colorCol.colorLum, colorRow.colorLum) }}
 									</td>
 								</template>
 							</template>
@@ -198,15 +191,15 @@
 		</div>
 	</div>
 	<!-- Levels of success -->
-    <div class="row mb-3">
+    <div class="row mb-5 mb-lg-3">
 		<SuccessLevels />
 	</div>
 	<!-- Color save -->
-	<div class="row mb-3">
+	<div class="row mb-5 mb-lg-3">
 		<ColorSave :data="colors" @load-data="loadData" />
 	</div>
 	<!-- Color export -->
-	<div class="row mb-3">
+	<div class="row mb-5 mb-lg-3">
 		<ColorExport :data="colors" :resultsRendering="resultsRendering" />
 	</div>
 </template>
@@ -279,17 +272,17 @@ export default {
 			? ((lum2 + 0.05) / (lum1 + 0.05))
 			: ((lum1 + 0.05) / (lum2 + 0.05))
 			if (this.displayOptions.showValues == true) {
-				return Math.floor((1 / ratio) * (10**this.levelOfAccuracy)) / (10**this.levelOfAccuracy)
+				return Math.floor((1 / ratio) * (10**this.levelOfAccuracy)) / (10**this.levelOfAccuracy) + ':1'
 			} else {
 				if (ratio <= 1/7) {
-					return "7"
+					return "7:1"
 				} else if (ratio <= 1/4.5) {
-					return "4.5"
+					return "4.5:1"
 				} else if (ratio <= 1/3) {
 					if (this.wcagLevel == 'AAA') {
 					return "Fail"
 					} else {
-					return "3"
+					return "3:1"
 					}
 				} else if (ratio < 1) {
 					return "Fail"
@@ -298,29 +291,30 @@ export default {
 				}
 			}
 		},
-		matrixStyles(success) {
+		matrixStyles(ratio) {
+			let num = ratio.split(":",1)
 			if (this.resultsRendering == 'colorizeResults') {
-				if (success == " " || success == 1) {
+				if (num == " " || num == 1) {
 					return { background: '' }
 				} else {
 					if (this.wcagLevel == 'AAA') {
-						if (success >= 7) {
+						if (num >= 7) {
 							return { background: '#0f03' }
-						}	else if (success >= 4.5) {
+						}	else if (num >= 4.5) {
 							return { background: '#ff03' }
 						}	else {
 							return { background: '#f113' }
 						}
 					} else if (this.wcagLevel == 'AA') {
-						if (success >= 4.5) {
+						if (num >= 4.5) {
 							return { background: '#0f03' }
-						}	else if (success >= 3) {
+						}	else if (num >= 3) {
 							return { background: '#ff03' }
 						}	else {
 							return { background: '#f113' }
 						}
 					} else {
-						if (success >= 3) {
+						if (num >= 3) {
 							return { background: '#0f03' }
 						}   else {
 							return { background: '#f113' }
