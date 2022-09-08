@@ -165,12 +165,12 @@
 							<td>
 								<br />
 							</td>
-							<th v-for="(color) in colors" :key="color.id">{{ color.colorName }} <span v-if="displayOptions.showSample" :style="{ color: '#' + color.colorHex }">■</span> <span class="text-muted fw-normal" v-if="displayOptions.showHex"> <br> #{{ color.colorHex }}</span></th>
+							<th style="text-align: left;" v-for="(color) in colors" :key="color.id"><div style="display:inline-flex; justify-content:space-between; width:100%">{{ color.colorName }} <span v-if="displayOptions.showSample" style="padding-left:3px" :style="{ color: '#' + color.colorHex }">■</span></div><span class="text-muted" style="font-weight:normal" v-if="displayOptions.showHex"><br>#{{ color.colorHex }}</span></th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr v-for="(colorCol) in colors" :key="colorCol.id">
-							<th>{{ colorCol.colorName }} <span v-if="displayOptions.showSample" :style="{ color: '#' + colorCol.colorHex }">■</span>  <span class="text-muted fw-normal" v-if="displayOptions.showHex"> <br> #{{ colorCol.colorHex }}</span></th>
+							<th style="text-align: left;"><div style="display:inline-flex; justify-content:space-between; width:100%">{{ colorCol.colorName }} <span v-if="displayOptions.showSample" style="padding-left:3px" :style="{ color: '#' + colorCol.colorHex }">■</span></div> <span class="text-muted" style="font-weight:normal" v-if="displayOptions.showHex"> <br> #{{ colorCol.colorHex }}</span></th>
 							<template v-for="(colorRow) in colors" :key="colorRow.id">
 								<td v-if="resultsRendering == 'renderResults'" :style="{ color: '#' + colorCol.colorHex, background: '#' + colorRow.colorHex}">
 									{{ exampleText }}

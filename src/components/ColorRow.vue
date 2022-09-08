@@ -1,10 +1,10 @@
 <template>
 	<div v-if="displayOptions.palette" class="text-center p-2 border">
-				<p class="mb-0 "> {{rowName}} </p>
-				<p class="mb-0 text-muted"> {{rowHex}} </p>
-				<div style="top: -50px; position: relative; margin-bottom: -50px; z-index: -1;">
-					<p  class="mb-0" style="font-size: 150px; line-height:1" :style="{ color: rowHex }">■</p>
-				</div>
+		<p class="mb-0 "> {{rowName}} </p>
+		<p class="mb-0 text-muted"> {{rowHex}} </p>
+		<div style="top: -50px; position: relative; margin-bottom: -50px; z-index: -1;">
+			<p  class="mb-0" style="font-size: 150px; line-height:1" :style="{ color: rowHex }">■</p>
+		</div>
 	</div>
 	<tr v-else>
 		<td class="align-middle">{{ id }}</td>
