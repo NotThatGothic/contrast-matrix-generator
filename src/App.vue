@@ -1,57 +1,94 @@
 <template>
 	<!-- Add color -->
-    <div class="row justify-content-between">
+    <div class="row mb-5">
 		<AddColor @add-color="addColor" />
-			
-		<div class="col-auto d-flex flex-column justify-content-between mb-5 mb-lg-3">
-            <h2>Display Options</h2>
-			<form class="form" @submit.prevent>
-				<div class="form-check">
-					<input class="form-check-input" type="checkbox" value="" id="showSample" v-model="displayOptions.showSample">
-					<label class="form-check-label" for="showSample">
-						Show Sample
-					</label>
-				</div>
-				<div class="form-check">
-					<input class="form-check-input" type="checkbox" value="" id="showLum" v-model="displayOptions.showLum">
-					<label class="form-check-label" for="showLum">
-						Show Luminosity
-					</label>
-				</div>
-				
-				<div class="form-check">
-					<input class="form-check-input" type="checkbox" value="" id="palette" v-model="displayOptions.palette">
-					<label class="form-check-label" for="palette">
-						Palette mode
-					</label>
-				</div>
-			</form>
-		</div>
 	</div>
 	<!-- Current colors -->
-    <div class="row mb-5 mb-lg-3">
+    <div class="row mb-5">
         <div class="col-12">
-            <h2>Current colors</h2>
-			<div style="overflow-x: auto; height:100%" v-if="colors.length > 0">
-				<div v-if="displayOptions.palette" class="d-flex flex-wrap">
+			<div class="row justify-content-between">
+				<div class="col-auto">
+					<h2>Current colors</h2>
+				</div>
+				<div class="col-auto text-end">
+					<button class="btn btn-light btn-outline-info" @click="copyTable('current-colors-table')" title="Copy table" >📋</button>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12 mb-3">
+					<div class="accordion" id="accordionDisplayOptions">
+						<div class="accordion-item">
+							<h2 class="accordion-header" id="displayOptionsHeading">
+								<button class="accordion-button collapsed me-2" type="button" data-bs-toggle="collapse" data-bs-target="#displayOptionsCollapse" aria-expanded="false" aria-controls="displayOptionsCollapse">
+									Display options
+								</button>
+							</h2>
+							<div id="displayOptionsCollapse" class="accordion-collapse collapse" aria-labelledby="displayOptionsHeading" data-bs-parent="#accordionDisplayOptions">
+								<div class="accordion-body">
+									<form class="form row" @submit.prevent>
+										<div class="col-auto">
+											<div class="form-check">
+												<input class="form-check-input" type="checkbox" value="" id="showRGB" v-model="displayOptions.showRGB">
+												<label class="form-check-label" for="showRGB">
+													Show RGB
+												</label>
+											</div>
+											<div class="form-check">
+												<input class="form-check-input" type="checkbox" value="" id="showSample" v-model="displayOptions.showSample">
+												<label class="form-check-label" for="showSample">
+													Show Sample
+												</label>
+											</div>
+											<div class="form-check">
+												<input class="form-check-input" type="checkbox" value="" id="showLum" v-model="displayOptions.showLum">
+												<label class="form-check-label" for="showLum">
+													Show Luminosity
+												</label>
+											</div>
+										</div>
+										<div class="col-auto">
+											<div class="form-check">
+												<input class="form-check-input" type="checkbox" value="" id="palette" v-model="displayOptions.palette">
+												<label class="form-check-label" for="palette">
+													Palette mode
+												</label>
+											</div>
+										</div>
+										<div class="col-auto">
+											<div class="form-check">
+												<input class="form-check-input" type="checkbox" value="" id="readOnly" v-model="displayOptions.readOnly">
+												<label class="form-check-label" for="readOnly">
+													Read only
+												</label>
+											</div>
+										</div>										
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div style="overflow-x: auto; height:100%" v-if="colors.length">
+				<div v-if="displayOptions.palette" id="current-colors-table" class="d-flex flex-wrap">
 					<div v-for="(color) in colors" :key="color.id" is="vue:ColorRow" :id="color.id" :name="color.colorName" :hex="color.colorHex" :displayOptions="displayOptions" @update-name="updateName" @update-hex="updateHex" @remove-row="removeRow" />
 				</div>
-				<table v-else class="table table-hover border">
+				<table v-else id="current-colors-table" class="table table-hover border">
 					<thead>
 						<tr>
-							<th style="width:5ex">ID</th>
+							<!-- <th style="width:5ex">ID</th> -->
 							<th style="width:auto">Color name</th>
 							<th style="width:20ex" class="text-center" v-if="displayOptions.showSample">Color sample</th>
 							<th style="width:auto">Color hexcode</th>
-							<th style="width:auto">Color RGB value</th>
+							<th v-if="displayOptions.showRGB" style="width:auto">Color RGB value</th>
 							<th style="width:auto" v-if="displayOptions.showLum">Color Lum</th>
-							<th></th>
+							<th v-if="!displayOptions.readOnly"></th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr v-for="(color) in colors" :key="color.id" is="vue:ColorRow" :id="color.id" :name="color.colorName" :hex="color.colorHex" :displayOptions="displayOptions" @update-name="updateName" @update-hex="updateHex" @remove-row="removeRow" />
 					</tbody>
-					<tfoot>
+					<tfoot v-if="!displayOptions.readOnly">
 						<tr>
 							<td colspan="100%" class="align-middle text-end">
 								<button type="button" class="close btn btn-danger" aria-label="Close"  @click="colors = []">
@@ -63,30 +100,34 @@
 				</table>
 			</div>
 			<div v-else>
-				<p class="text-muted">Add some colors with the form, import colors from JSON below or <a href="#" @click="defaultData">load some example colors from Bootstrap</a>.</p>
+				<p class="text-muted">Add some colors with the input above, import colors from JSON below or <a role="button" class="text-link" @click="loadData(bootstrapColors)">load some example colors from Bootstrap</a>.</p>
 			</div>
         </div>
     </div>
 	<!-- Contrast table -->
-    <div class="row mb-5 mb-lg-3">
+    <div class="row mb-5">
         <div class="col-12">
 			<div class="row justify-content-between">
-				<div class="col-6 mb-3">
-					<h2>Contrast table</h2>
+				<div class="col-auto">
+					<h2 class="">Contrast table</h2>
 				</div>
-				<div class="col-6 col-lg-4 mb-3">
-					<div class="accordion" id="accordionOptions">
+				<div class="col-auto text-end">
+					<button class="btn btn-light btn-outline-info" @click="copyTable('contrast-matrix-table')" title="Copy table" >📋</button>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12 mb-3">
+					<div class="accordion" id="accordionContrastOptions">
 						<div class="accordion-item">
-							<h2 class="accordion-header" id="optionsHeading">
-								<button class="accordion-button collapsed me-2" type="button" data-bs-toggle="collapse" data-bs-target="#optionsCollapse" aria-expanded="false" aria-controls="optionsCollapse">
+							<h2 class="accordion-header" id="contrastOptionsHeading">
+								<button class="accordion-button collapsed me-2" type="button" data-bs-toggle="collapse" data-bs-target="#contrastOptionsCollapse" aria-expanded="false" aria-controls="contrastOptionsCollapse">
 									Contrast table options
 								</button>
 							</h2>
-							<div id="optionsCollapse" class="accordion-collapse collapse" aria-labelledby="optionsHeading" data-bs-parent="#accordionOptions">
+							<div id="contrastOptionsCollapse" class="accordion-collapse collapse" aria-labelledby="contrastOptionsHeading" data-bs-parent="#accordionContrastOptions">
 								<div class="accordion-body">
-
 									<form class="form row" @submit.prevent >
-										<div class="col-6 py-2">
+										<div class="col-auto">
 											<div class="form-check">
 												<input class="form-check-input" type="checkbox" value="" id="showHex" v-model="displayOptions.showHex">
 												<label class="form-check-label" for="showHex">
@@ -94,7 +135,7 @@
 												</label>
 											</div>
 										</div>
-										<div class="col-6 py-2">
+										<div class="col-auto">
 											<div class="form-check">
 												<input class="form-check-input" type="radio" value="AAA" id="AAA" v-model="wcagLevel">
 												<label class="form-check-label" for="AAA">
@@ -114,20 +155,19 @@
 												</label>
 											</div>
 										</div>
-										<div class="col-6 py-2">
-											<div class="form-check">
-												<input class="form-check-input" type="checkbox" value="" id="showValues" v-model="displayOptions.showValues" :disabled="resultsRendering == 'renderResults'">
+										<div class="col-2">
+											<fieldset :disabled="resultsRendering == 'renderResults'" class="form-check">
+												<input class="form-check-input" type="checkbox" value="" id="showValues" v-model="displayOptions.showValues">
 												<label class="form-check-label" for="showValues">
 													Show Values
 												</label>
-											</div>
+											</fieldset>
+											<fieldset :disabled="resultsRendering == 'renderResults'" >
+												<label for="example-text" class="form-label">Level of Accuracy</label>
+												<input id="example-text" class="form-control" type="number" min="1" name="levelOfAccuracy" v-model="levelOfAccuracy" />
+											</fieldset>
 										</div>
-										<div class="col-6 py-2" v-if="displayOptions.showValues">
-											<label for="example-text" class="form-label">Level of Accuracy</label>
-											<input id="example-text" class="form-control w-50" type="number" min="1" name="levelOfAccuracy" v-model="levelOfAccuracy" />
-										</div>
-										<div class="w-100"></div>
-										<div class="col-6 py-2">
+										<div class="col-auto">
 											<div class="form-check">
 												<input class="form-check-input" type="radio" value="colorizeResults" id="colorizeResults" v-model="resultsRendering">
 												<label class="form-check-label" for="colorizeResults">
@@ -147,10 +187,10 @@
 												</label>
 											</div>
 										</div>
-										<div class="col-12 py-2"  v-if="resultsRendering == 'renderResults'">
+										<fieldset class="col" :disabled="resultsRendering !== 'renderResults'">
 											<label for="example-text" class="form-label">Example Text</label>
 											<input id="example-text" class="form-control" type="text" name="example-text" v-model="exampleText" />
-										</div>
+										</fieldset>
 									</form>
 								</div>
 							</div>
@@ -158,8 +198,8 @@
 					</div>
 				</div>
 			</div>
-			<div style="overflow-x:auto;" v-if="colors.length > 1">
-				<table id="contrast-matrix-table" class="table table-bordered table-assist">
+			<div style="overflow-x:auto;" v-if="colors.length >= 2">
+				<table id="contrast-matrix-table" ref="contrast" class="table table-bordered table-assist">
 					<thead>
 						<tr>
 							<td>
@@ -176,7 +216,7 @@
 									{{ exampleText }}
 								</td>
 								<template v-else>
-									<td  :style="matrixStyles(calculateContrast(colorCol.colorLum, colorRow.colorLum))">
+									<td :style="matrixStyles(calculateContrast(colorCol.colorLum, colorRow.colorLum))">
 										{{ calculateContrast(colorCol.colorLum, colorRow.colorLum) }}
 									</td>
 								</template>
@@ -191,16 +231,12 @@
 		</div>
 	</div>
 	<!-- Levels of success -->
-    <div class="row mb-5 mb-lg-3">
+    <div class="row mb-5">
 		<SuccessLevels />
 	</div>
-	<!-- Color save -->
-	<div class="row mb-5 mb-lg-3">
-		<ColorSave :data="colors" @load-data="loadData" />
-	</div>
 	<!-- Color export -->
-	<div class="row mb-5 mb-lg-3">
-		<ColorExport :data="colors" :resultsRendering="resultsRendering" />
+	<div class="row">
+		<ColorExport :data="colors" :resultsRendering="resultsRendering" @load-data="loadData"/>
 	</div>
 </template>
 
@@ -208,40 +244,63 @@
 	import AddColor from "./components/AddColor.vue"
 	import ColorRow from "./components/ColorRow.vue"
 	import SuccessLevels from "./components/SuccessLevels.vue"
-	import ColorSave from "./components/ColorSave.vue"
 	import ColorExport from "./components/ColorExport.vue"
-
 	import ColorData from "./assets/ColorData.json"
 
 export default {
 	name: 'ContrastMatrix',
+	mounted() {
+		if(window.location.search) {
+			this.loadData(getAllUrlParams(this.url))
+		}
+	},
 	data () {
 		return {
 			displayOptions: {
 				showSample: true,
 				showLum: false,
 				showHex: false,
+				showRGB: true,
 				showValues: false,
 				palette: false,
+				readOnly: false,
 			},
 			wcagLevel: 'AA',
 			resultsRendering: "colorizeResults",
 			exampleText: "Lorem Ipsum dolor sit amet",
 			levelOfAccuracy: 3,
 			colors: [],
+			bootstrapColors: ColorData,
+			url: window.location.search
+		}
+	},
+	watch: {
+		compUrl(newUrl, oldUrl) {
+			window.history.replaceState({}, '', '?'+newUrl );
 		}
 	},
 	computed: {
 		nextId() {
-			return this.colors.length
+			if (this.colors.length) {
+				return (this.colors[(this.colors.length - 1)].id + 1)
+			} else {
+				return 0
+			}
 		},
-		
+		compUrl() {
+			if(this.colors){
+				var urlParams = new URLSearchParams();
+				this.colors.forEach((obj,i) => {
+					urlParams.append([obj.colorName], [obj.colorHex]);
+				})
+			}
+			return urlParams
+		}
 	},
 	components: {
 		AddColor,
 		ColorRow,
 		SuccessLevels,
-		ColorSave,
 		ColorExport,
 	},
 	methods: {
@@ -255,8 +314,6 @@ export default {
 			})
 		},
 		updateHex(hex,id) {
-			console.log(hex, id)
-			console.log(this.colors[id])
 			this.colors[id].colorHex = standardizeHex(hex),
 			this.colors[id].colorRGB = hexToRGB(hex),
 			this.colors[id].colorLum = calculateLum(hexToRGB(hex).r,hexToRGB(hex).g,hexToRGB(hex).b)
@@ -265,7 +322,7 @@ export default {
 			this.colors[id].colorName = name
 		},
 		removeRow(id) {
-			this.colors.splice(id, 1)
+			this.colors.splice(this.colors.findIndex(item => item.id == id), 1)
 		},
 		calculateContrast(lum1, lum2) {
 			var ratio = lum1 > lum2 
@@ -325,15 +382,30 @@ export default {
 				return { background: '' }
 			}
 		},
-		
 		loadData(data) {
-			this.colors = JSON.parse(data)
+			this.colors = []
+			var isValidJSON = true;
+			try { JSON.parse(data) } catch {isValidJSON = false }
+			if (isValidJSON) {data = JSON.parse(data)}
+			for (const [key, value] of Object.entries(data)) {
+				this.addColor(`${key}`, `${value}`) 
+			}
 		},
-		defaultData() {
-			this.colors = ColorData
-		}
+		copyTable(option) {
+			let toCopy = document.querySelector('#'+option);
+			selectNode(toCopy);
+		},
 	}
+}
 
+function selectNode(node){
+	let range  =  document.createRange();
+	range.selectNodeContents(node)
+	let select =  window.getSelection()
+	select.removeAllRanges()
+	select.addRange(range)  
+	document.execCommand('copy')
+	select.removeAllRanges()
 }
 
 function standardizeHex(value) {
@@ -343,7 +415,7 @@ function standardizeHex(value) {
 	if (value.length == 3) {
 		value = value[0] + value[0] + value[1] + value[1] + value[2] + value[2];
 	}
-	return value;
+	return value.toLowerCase();
 }
 
 function hexToRGB(hex) {
@@ -369,6 +441,22 @@ function calculateLum(r, g, b) {
     });
     return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
 }
+function getAllUrlParams(url) {
+	var queryString = url.split('?')[1];
+	var obj = {};
+	if (queryString) {
+		queryString = queryString.split('#')[0];
+		var arr = queryString.split('&');
+		for (var i = 0; i < arr.length; i++) {
+			var a = arr[i].split('=');
+			var paramName = a[0];
+			var paramValue = a[1];
+			obj[paramName] = paramValue;
+		}
+	}
+	return obj;
+}
+
 </script>
 
 <style scoped lang="stylus">
@@ -402,5 +490,9 @@ function calculateLum(r, g, b) {
   .table-assist td:hover::after,
   .table-assist th:hover::after {
 	background-color: #88f2;
+  }
+
+  fieldset:disabled label {
+    opacity: 0.5;
   }
 </style>
