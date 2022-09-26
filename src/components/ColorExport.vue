@@ -7,24 +7,24 @@
 				<div class="col">
 					<div class="row">
 						<div class="col">
-							<textarea id="export-table" class="form-control mb-3" ref="textarea" style="" type="text" name="export-table" v-model="matrixData"/>
+							<textarea id="export-table" class="form-control mb-3" style="" type="text" name="export-table" v-model="matrixData"/>
 						</div>
 					</div>
 					<div class="row d-flex justify-content-between">
 						<div class="col-auto mb-3 mb-md-0">
-							<button class="btn btn-primary me-2" type="btn" @click="saveColorData()">Save to JSON</button>
-							<button class="btn btn-primary" type="btn" @click="loadColorData()">Load JSON data</button>
+							<button class="btn btn-primary me-2" type="btn" @click="saveColorData()" :disabled="!this.data.length">Save to JSON</button>
+							<button class="btn btn-primary" type="btn" @click="loadColorData()" :disabled="!this.matrixData">Load JSON data</button>
 						</div>
 						<div class="col-auto mb-3 mb-md-0">
-							<button class="btn btn-primary me-2" type="btn" @click="generateExportTable()">Contrast Table to HTML</button>
-							<button class="btn btn-primary" type="btn" @click="copyUrl()">Share URL</button>
+							<button class="btn btn-primary me-2" type="btn" @click="generateExportTable()" :disabled="this.data.length < 2">Contrast Table to HTML</button>
+							<button class="btn btn-primary" type="btn" @click="copyUrl()" :disabled="!this.data.length">Share URL</button>
 						</div>
 					</div>
 				</div>
 				<div class="col-auto">
 					<div class="d-flex flex-column">
-						<button class="btn btn-light btn-outline-info mb-2" @click="copyExport" title="Copy export" >📋</button>
-						<button class="btn btn-light btn-outline-danger" @click="this.matrixData=''" title="Clear export" >🗑️</button>
+						<button class="btn btn-light btn-outline-info mb-2" @click="copyExport" :disabled="!this.matrixData" title="Copy export" >📋</button>
+						<button class="btn btn-light btn-outline-danger" @click="this.matrixData=''" :disabled="!this.matrixData" title="Clear export" >🗑️</button>
 					</div>
 				</div>
 			</div>
@@ -84,7 +84,7 @@
 			}
 		},
 		copyExport() {
-			navigator.clipboard.writeText(this.$refs.textarea.value)
+			navigator.clipboard.writeText(this.matrixData)
 		},
 		copyUrl() {
 			navigator.clipboard.writeText(window.location)

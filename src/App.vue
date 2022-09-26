@@ -11,7 +11,7 @@
 					<h2>Current colors</h2>
 				</div>
 				<div class="col-auto text-end">
-					<button class="btn btn-light btn-outline-info" @click="copyTable('current-colors-table')" title="Copy table" >📋</button>
+					<button class="btn btn-light btn-outline-info" @click="copyTable('current-colors-table')" :disabled="!colors.length" title="Copy table" >📋</button>
 				</div>
 			</div>
 			<div class="row">
@@ -112,7 +112,7 @@
 					<h2 class="">Contrast table</h2>
 				</div>
 				<div class="col-auto text-end">
-					<button class="btn btn-light btn-outline-info" @click="copyTable('contrast-matrix-table')" title="Copy table" >📋</button>
+					<button class="btn btn-light btn-outline-info" @click="copyTable('contrast-matrix-table')" :disabled="colors.length < 2" title="Copy table" >📋</button>
 				</div>
 			</div>
 			<div class="row">
