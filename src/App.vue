@@ -69,7 +69,7 @@
 					</div>
 				</div>
 			</div>
-			<div style="overflow-x: auto; height:100%" v-if="colors" :key="renderKey">
+			<div style="overflow-x: auto; height:100%" v-if="colors.length" :key="renderKey">
 				<div v-if="displayOptions.palette" id="current-colors-table" class="d-flex flex-wrap">
 					<div v-for="(color) in colors" :key="color.id" is="vue:ColorRow" :id="color.id" :name="color.colorName" :hex="color.colorHex" :displayOptions="displayOptions" @update-name="updateName" @update-hex="updateHex" @remove-row="removeRow" />
 				</div>
