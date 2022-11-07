@@ -157,12 +157,14 @@ function calculateLum(r, g, b) {
 }
 
 function standardizeRGB(value) {
-	var regex = /RGB:? ?|\(|\)/ig
-	return value = value.replaceAll(regex, '')
+	var regex = /rgb:?|\(|\)|,(?= )/ig
+	value = value.replaceAll(regex, '')
+	var regex2 = /,/g
+	return value = value.replaceAll(regex2, ' ')
 }
 
 function RGBToHex(rgb) {
-	var regex = /(\d+)[,\s]?\s?(\d+)[,\s]?\s?(\d+)/
+	var regex = /^(\d+)\s(\d+)\s(\d+)$/
 	rgb = rgb.replace(regex, function(m, r,g,b) {
 		r = Math.abs(r).toString(16)
 		g = Math.abs(g).toString(16)

@@ -11,7 +11,7 @@
 					<h2>Current colors</h2>
 				</div>
 				<div class="col-auto text-end">
-					<button class="btn btn-light btn-outline-info" @click="copyTable('current-colors-table')" :disabled="!colors.length" title="Copy table" >📋</button>
+					<button class="btn btn-light btn-outline-info mb-1" @click="copyTable('current-colors-table')" :disabled="!colors.length" title="Copy table" >📋</button>
 				</div>
 			</div>
 			<div class="row">
@@ -69,7 +69,7 @@
 					</div>
 				</div>
 			</div>
-			<div style="overflow-x: auto; height:100%" v-if="colors.length">
+			<div style="overflow-x: auto; height:100%" v-if="colors" :key="renderKey">
 				<div v-if="displayOptions.palette" id="current-colors-table" class="d-flex flex-wrap">
 					<div v-for="(color) in colors" :key="color.id" is="vue:ColorRow" :id="color.id" :name="color.colorName" :hex="color.colorHex" :displayOptions="displayOptions" @update-name="updateName" @update-hex="updateHex" @remove-row="removeRow" />
 				</div>
@@ -112,7 +112,7 @@
 					<h2 class="">Contrast table</h2>
 				</div>
 				<div class="col-auto text-end">
-					<button class="btn btn-light btn-outline-info" @click="copyTable('contrast-matrix-table')" :disabled="colors.length < 2" title="Copy table" >📋</button>
+					<button class="btn btn-light btn-outline-info mb-1" @click="copyTable('contrast-matrix-table')" :disabled="colors.length < 2" title="Copy table" >📋</button>
 				</div>
 			</div>
 			<div class="row">
@@ -271,7 +271,8 @@ export default {
 			levelOfAccuracy: 3,
 			colors: [],
 			bootstrapColors: ColorData,
-			url: window.location.search
+			url: window.location.search,
+			renderKey: 0
 		}
 	},
 	watch: {
@@ -384,11 +385,14 @@ export default {
 		},
 		loadData(data) {
 			this.colors = []
+			this.renderKey++;
 			var isValidJSON = true;
+			var regex = /%2B|%20|%25/gi
 			try { JSON.parse(data) } catch {isValidJSON = false }
 			if (isValidJSON) {data = JSON.parse(data)}
 			for (const [key, value] of Object.entries(data)) {
-				this.addColor(`${key}`, `${value}`) 
+				var parsed = key.replaceAll(regex, ' ')
+				this.addColor(`${parsed}`, `${value}`) 
 			}
 		},
 		copyTable(option) {

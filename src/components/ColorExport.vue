@@ -1,34 +1,36 @@
 <template>
 	<!-- Color export -->
 	<div class="col-12">
-		<h2>Matrix data</h2>
-		<form class="form" id="export-table-form" @submit.prevent spellcheck="false">
-			<div class="row">
-				<div class="col">
-					<div class="row">
-						<div class="col">
-							<textarea id="export-table" class="form-control mb-3" style="" type="text" name="export-table" v-model="matrixData"/>
-						</div>
-					</div>
-					<div class="row d-flex justify-content-between">
-						<div class="col-auto mb-3 mb-md-0">
-							<button class="btn btn-primary me-2" type="btn" @click="saveColorData()" :disabled="!this.data.length">Save to JSON</button>
-							<button class="btn btn-primary" type="btn" @click="loadColorData()" :disabled="!this.matrixData">Load JSON data</button>
-						</div>
-						<div class="col-auto mb-3 mb-md-0">
-							<button class="btn btn-primary me-2" type="btn" @click="generateExportTable()" :disabled="this.data.length < 2">Contrast Table to HTML</button>
-							<button class="btn btn-primary" type="btn" @click="copyUrl()" :disabled="!this.data.length">Share URL</button>
-						</div>
-					</div>
-				</div>
-				<div class="col-auto">
-					<div class="d-flex flex-column">
-						<button class="btn btn-light btn-outline-info mb-2" @click="copyExport" :disabled="!this.matrixData" title="Copy export" >📋</button>
-						<button class="btn btn-light btn-outline-danger" @click="this.matrixData=''" :disabled="!this.matrixData" title="Clear export" >🗑️</button>
-					</div>
+		<div class="row justify-content-between">
+			<div class="col-auto">
+				<h2>Matrix data</h2>
+			</div>
+			<div class="col-auto text-end">
+				<div class="d-flex">
+					<button class="btn btn-light btn-outline-danger me-2 mb-1" @click="this.matrixData=''" :disabled="!this.matrixData" title="Clear export" >🗑️</button>
+					<button class="btn btn-light btn-outline-info mb-1" @click="copyExport" :disabled="!this.matrixData" title="Copy export" >📋</button>
 				</div>
 			</div>
-		</form>
+		</div>
+		<div>
+			<form class="form" id="export-table-form" @submit.prevent spellcheck="false">
+				<div class="row">
+					<div class="col">
+						<textarea id="export-table" class="form-control mb-3" style="" type="text" name="export-table" v-model="matrixData"/>
+					</div>
+				</div>
+				<div class="row d-flex justify-content-between">
+					<div class="col-auto mb-3 mb-md-0">
+						<button class="btn btn-primary me-2" type="btn" @click="saveColorData()" :disabled="!this.data.length">Save to JSON</button>
+						<button class="btn btn-primary" type="btn" @click="loadColorData()" :disabled="!this.matrixData">Load JSON data</button>
+					</div>
+					<div class="col-auto mb-3 mb-md-0">
+						<button class="btn btn-primary me-2" type="btn" @click="generateExportTable()" :disabled="this.data.length < 2">Contrast Table to HTML</button>
+						<button class="btn btn-primary" type="btn" @click="copyUrl()" :disabled="!this.data.length">Share URL</button>
+					</div>
+				</div>
+			</form>
+		</div>
 	</div>
 </template>
 

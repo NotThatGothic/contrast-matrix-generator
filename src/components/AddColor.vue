@@ -70,7 +70,7 @@ export default {
 					this.newColorName = ''
 					this.newColorCode = ''
 				} else 
-				if ((/\(?\d+[,\s]?\d+[,\s]?\d+\)?/).test(this.newColorCode)) {
+				if ((/(?:rgb)?:?\s?\(?(\d{1,3})(?:\s|,|,\s)(\d{1,3})(?:\s|,|,\s)(\d{1,3})\)?/gi).test(this.newColorCode)) {
 					var test = standardizeRGB(this.newColorCode)
 					console.log('rgb ' + test)
 					var toHex = RGBToHex(test)
@@ -87,8 +87,10 @@ export default {
 	}
 }
 function standardizeRGB(value) {
-	var regex = /RGB:? ?|\(|\)/ig
-	return value = value.replaceAll(regex, '')
+	var regex = /rgb:?|\(|\)|,(?= )|^\s|\s$/ig
+	value = value.replaceAll(regex, '')
+	var regex2 = /,/g
+	return value = value.replaceAll(regex2, ' ')
 }
 
 function standardizeHex(value) {
@@ -100,7 +102,7 @@ function standardizeHex(value) {
 }
 
 function RGBToHex(rgb) {
-	var regex = /^(\d{1,3})\s(\d{1,3})\s(\d{1,3})$/
+	var regex = /^(\d+)\s(\d+)\s(\d+)$/
 	rgb = rgb.replace(regex, function(m, r,g,b) {
 		r = Math.abs(r).toString(16)
 		g = Math.abs(g).toString(16)
