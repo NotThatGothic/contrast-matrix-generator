@@ -69,7 +69,10 @@
 					</div>
 				</div>
 			</div>
-			<div style="overflow-x: auto; height:100%" v-if="colors.length" :key="renderKey">
+			<div v-if="colors.length == 0">
+				<p class="text-muted">Add some colors with the input above, import colors from JSON below or <a role="button" class="text-link" @click="loadData(bootstrapColors)">load some example colors from Bootstrap</a>.</p>
+			</div>
+			<div style="overflow-x: auto; height:100%" v-else :key="renderKey">
 				<div v-if="displayOptions.palette" id="current-colors-table" class="d-flex flex-wrap">
 					<div v-for="(color) in colors" :key="color.id" is="vue:ColorRow" :id="color.id" :name="color.colorName" :hex="color.colorHex" :displayOptions="displayOptions" @update-name="updateName" @update-hex="updateHex" @remove-row="removeRow" />
 				</div>
@@ -98,9 +101,6 @@
 						</tr>
 					</tfoot>
 				</table>
-			</div>
-			<div v-else>
-				<p class="text-muted">Add some colors with the input above, import colors from JSON below or <a role="button" class="text-link" @click="loadData(bootstrapColors)">load some example colors from Bootstrap</a>.</p>
 			</div>
         </div>
     </div>
@@ -399,6 +399,11 @@ export default {
 			let toCopy = document.querySelector('#'+option);
 			selectNode(toCopy);
 		},
+		 test() {
+			console.log(this.renderKey);
+			console.log(this.colors);
+			console.log(this.colors.length);
+		}
 	}
 }
 
