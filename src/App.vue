@@ -79,7 +79,6 @@
 				<table v-else id="current-colors-table" class="table table-hover border">
 					<thead>
 						<tr>
-							<!-- <th style="width:5ex">ID</th> -->
 							<th style="width:auto">Color name</th>
 							<th style="width:20ex" class="text-center" v-if="displayOptions.showSample">Color sample</th>
 							<th style="width:auto">Color hexcode</th>
@@ -134,8 +133,14 @@
 													Show Hex on Table
 												</label>
 											</div>
+											<div class="form-check">
+												<input class="form-check-input" type="checkbox" value="" id="APCA" v-model="displayOptions.apca">
+												<label class="form-check-label" for="APCA">
+													APCA standards
+												</label>
+											</div>
 										</div>
-										<div class="col-auto">
+										<div class="col-auto" v-if="displayOptions.apca == false">
 											<div class="form-check">
 												<input class="form-check-input" type="radio" value="AAA" id="AAA" v-model="wcagLevel">
 												<label class="form-check-label" for="AAA">
@@ -155,14 +160,14 @@
 												</label>
 											</div>
 										</div>
-										<div class="col-2">
+										<div class="col-2" v-if="displayOptions.apca == false">
 											<fieldset :disabled="resultsRendering == 'renderResults'" class="form-check">
 												<input class="form-check-input" type="checkbox" value="" id="showValues" v-model="displayOptions.showValues">
 												<label class="form-check-label" for="showValues">
 													Show Values
 												</label>
 											</fieldset>
-											<fieldset :disabled="resultsRendering == 'renderResults'" >
+											<fieldset :disabled="resultsRendering == 'renderResults'" class="form-check" >
 												<label for="example-text" class="form-label">Level of Accuracy</label>
 												<input id="example-text" class="form-control" type="number" min="1" name="levelOfAccuracy" v-model="levelOfAccuracy" />
 											</fieldset>
@@ -213,12 +218,25 @@
 							<th style="text-align: left;"><div style="display:inline-flex; justify-content:space-between; width:100%">{{ colorCol.colorName }} <span v-if="displayOptions.showSample" style="padding-left:3px" :style="{ color: '#' + colorCol.colorHex }">■</span></div> <span class="text-muted" style="font-weight:normal" v-if="displayOptions.showHex"> <br> #{{ colorCol.colorHex }}</span></th>
 							<template v-for="(colorRow) in colors" :key="colorRow.id">
 								<td v-if="resultsRendering == 'renderResults'" :style="{ color: '#' + colorCol.colorHex, background: '#' + colorRow.colorHex}">
+									<template v-if="displayOptions.apca == false">
+											{{ calculateContrast(colorCol.colorLum, colorRow.colorLum) }}
+									</template>
+									<template v-else>
+											{{ apcaContrast(colorCol.colorHex,colorRow.colorHex) }}
+									</template>
 									{{ exampleText }}
 								</td>
 								<template v-else>
-									<td :style="matrixStyles(calculateContrast(colorCol.colorLum, colorRow.colorLum))">
-										{{ calculateContrast(colorCol.colorLum, colorRow.colorLum) }}
-									</td>
+									<template v-if="displayOptions.apca == false">
+										<td :style="matrixStyles(calculateContrast(colorCol.colorLum, colorRow.colorLum))">
+											{{ calculateContrast(colorCol.colorLum, colorRow.colorLum) }}
+										</td>
+									</template>
+									<template v-else>
+										<td :style="apcaStyles(apcaContrast(colorCol.colorHex,colorRow.colorHex))">
+											{{ apcaContrast(colorCol.colorHex,colorRow.colorHex) }}
+										</td>
+									</template>
 								</template>
 							</template>
 						</tr>
@@ -232,7 +250,7 @@
 	</div>
 	<!-- Levels of success -->
     <div class="row mb-5">
-		<SuccessLevels />
+		<SuccessLevels :displayOptions="displayOptions" />
 	</div>
 	<!-- Color export -->
 	<div class="row">
@@ -247,6 +265,8 @@
 	import ColorExport from "./components/ColorExport.vue"
 	import ColorData from "./assets/ColorData.json"
 
+	import { APCAcontrast, reverseAPCA, sRGBtoY, displayP3toY, adobeRGBtoY, alphaBlend, calcAPCA, fontLookupAPCA } from 'apca-w3';
+	import { colorParsley, colorToHex, colorToRGB } from 'colorparsley';  // optional string parsing
 export default {
 	name: 'ContrastMatrix',
 	mounted() {
@@ -264,6 +284,7 @@ export default {
 				showValues: false,
 				palette: false,
 				readOnly: false,
+				apca: false,
 			},
 			wcagLevel: 'AA',
 			resultsRendering: "colorizeResults",
@@ -381,6 +402,18 @@ export default {
 				}
 			} else {
 				return { background: '' }
+			}	
+		},
+		apcaStyles(score) {
+			let style = Math.abs(score);
+			if (this.resultsRendering == 'colorizeResults') {
+			if (style >= 90) {return { background: '#D4F5EB99'}}
+			else if (style >= 75) {return { background: '#91E4CC99' }}
+			else if (style >= 60) {return { background: '#F3AE5B99' }}
+			else if (style >= 45) {return { background: '#EB8F0099' }}
+			else if (style >= 30) {return { background: '#E3606C99' }}
+			else if (style >= 15) {return { background: '#D4334399' }}
+			else {return { background: '' }}
 			}
 		},
 		loadData(data) {
@@ -399,10 +432,10 @@ export default {
 			let toCopy = document.querySelector('#'+option);
 			selectNode(toCopy);
 		},
-		 test() {
-			console.log(this.renderKey);
-			console.log(this.colors);
-			console.log(this.colors.length);
+		apcaContrast(text,bg) {
+			// return Math.round(calcAPCA(text,bg));
+			return Math.round((calcAPCA(text,bg) + Number.EPSILON) * 100) / 100;
+
 		}
 	}
 }
@@ -500,7 +533,10 @@ function getAllUrlParams(url) {
   .table-assist th:hover::after {
 	background-color: #88f2;
   }
-
+  .table-assist td:hover,
+  .table-assist th:hover {
+	outline: solid 2px #f8f4 !important;
+  }
   fieldset:disabled label {
     opacity: 0.5;
   }
