@@ -334,6 +334,7 @@ export default {
 				colorRGB: hexToRGB(newColorHex),
 				colorLum: calculateLum(hexToRGB(newColorHex).r,hexToRGB(newColorHex).g,hexToRGB(newColorHex).b),
 			})
+			this.renderKey++;
 		},
 		updateHex(hex,id) {
 			this.colors[id].colorHex = standardizeHex(hex),
@@ -407,13 +408,14 @@ export default {
 		apcaStyles(score) {
 			let style = Math.abs(score);
 			if (this.resultsRendering == 'colorizeResults') {
-			if (style >= 90) {return { background: '#D4F5EB99'}}
-			else if (style >= 75) {return { background: '#91E4CC99' }}
-			else if (style >= 60) {return { background: '#F3AE5B99' }}
-			else if (style >= 45) {return { background: '#EB8F0099' }}
-			else if (style >= 30) {return { background: '#E3606C99' }}
-			else if (style >= 15) {return { background: '#D4334399' }}
-			else {return { background: '' }}
+				if (style >= 90) {return { background: '#D4F5EB99'}}
+				else if (style >= 75) {return { background: '#91E4CC99' }}
+				else if (style >= 60) {return { background: '#F3AE5B99' }}
+				else if (style >= 45) {return { background: '#EB8F0099' }}
+				else if (style >= 30) {return { background: '#E3606C99' }}
+				else if (style >= 15) {return { background: '#D4334399' }}
+				else if (style >= 1) {return { background: '#eeeeee99' }}
+				else {return { background: '' }}
 			}
 		},
 		loadData(data) {
@@ -529,12 +531,12 @@ function getAllUrlParams(url) {
 	z-index: -1;
   }
   
-  .table-assist td:hover::after,
-  .table-assist th:hover::after {
+  .table-assist tbody td:hover::after,
+  .table-assist tbody th:hover::after,
+  .table-assist thead th:hover::after{
 	background-color: #88f2;
   }
-  .table-assist td:hover,
-  .table-assist th:hover {
+  .table-assist tbody td:hover {
 	outline: solid 2px #f8f4 !important;
   }
   fieldset:disabled label {
