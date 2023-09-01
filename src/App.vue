@@ -1,4 +1,115 @@
 <template>
+	<div class="fixed-top">
+		<div class="accordion" id="accordionDisplayOptions">
+			<div class="accordion-body">
+				<div id="displayOptionsCollapse" class="accordion-collapse collapse bg-white border border-primary shadow-sm" aria-labelledby="displayOptionsHeading" data-bs-parent="#accordionDisplayOptions">
+					<div class="accordion-body">
+						<form class="form row" @submit.prevent>
+							<div class="col-auto">
+								<div class="form-check form-switch">
+									<input class="form-check-input" type="checkbox" value="" id="readOnly" v-model="displayOptions.readOnly">
+									<label class="form-check-label" for="readOnly">
+										Read only mode
+									</label>
+								</div>
+								<div class="form-check form-switch">
+									<input class="form-check-input" type="checkbox" value="" id="palette" v-model="displayOptions.palette">
+									<label class="form-check-label" for="palette">
+										Palette mode
+									</label>
+								</div>
+								<div class="form-check form-switch">
+									<input class="form-check-input" type="checkbox" value="" id="showRGB" v-model="displayOptions.showRGB">
+									<label class="form-check-label" for="showRGB">
+										Show RGB value
+									</label>
+								</div>								
+								<div class="form-check form-switch">
+									<input class="form-check-input" type="checkbox" value="" id="showLum" v-model="displayOptions.showLum">
+									<label class="form-check-label" for="showLum">
+										Show Luminosity
+									</label>
+								</div>
+							</div>
+							<div class="col-auto">
+								<div class="form-check form-switch">
+									<input class="form-check-input" type="checkbox" value="" id="resultsRendering" v-model="displayOptions.resultsRendering">
+									<label class="form-check-label" for="resultsRendering">
+										Color results
+									</label>
+								</div>
+								<div class="form-check form-switch">
+									<input class="form-check-input" type="checkbox" value="" id="showSample" v-model="displayOptions.showSample">
+									<label class="form-check-label" for="showSample">
+										Show Sample
+									</label>
+								</div>
+								<div class="form-check form-switch">
+									<input class="form-check-input" type="checkbox" value="" id="showHex" v-model="displayOptions.showHex">
+									<label class="form-check-label" for="showHex">
+										Show Hex
+									</label>
+								</div>						
+							</div>
+							<div class="col">
+								<div class="form-check form-switch">
+									<input class="form-check-input" type="checkbox" value="" id="APCA" v-model="displayOptions.apca">
+									<label class="form-check-label" for="APCA">
+										APCA standards
+									</label>
+								</div>
+								<div class="row">
+									<div class="col-auto">
+										<fieldset :disabled="displayOptions.apca == true">
+											<div class="form-check">
+												<input class="form-check-input" type="radio" value="AAA" id="AAA" v-model="wcagLevel">
+												<label class="form-check-label" for="AAA">
+													Success Level AAA
+												</label>
+											</div>
+											<div class="form-check">
+												<input class="form-check-input" type="radio" value="AA" id="AA" v-model="wcagLevel">
+												<label class="form-check-label" for="AA">
+													Success Level AA
+												</label>
+											</div>
+											<div class="form-check">
+												<input class="form-check-input" type="radio" value="A" id="A" v-model="wcagLevel">
+												<label class="form-check-label" for="A">
+													Success Level A
+												</label>
+											</div>
+										</fieldset>
+									</div>
+									<div class="col">
+										<fieldset :disabled="displayOptions.apca == true" class="form-check">
+											<input class="form-check-input" type="checkbox" value="" id="showValues" v-model="displayOptions.showValues">
+											<label class="form-check-label" for="showValues">
+												Show Values
+											</label>
+										</fieldset>
+										<fieldset :disabled="displayOptions.apca == true | (displayOptions.showValues == false)" >
+											<div class="input-group">
+												<span for="level-of-accuracy" class="input-group-text">Level of Accuracy</span>
+												<input id="level-of-accuracy" class="form-control" type="number" min="1" name="levelOfAccuracy" v-model="levelOfAccuracy" />
+											</div>
+										</fieldset>
+									</div>
+								</div>
+							</div>
+							<fieldset class="col">
+								<label for="example-text" class="form-label">Example Text</label>
+								<input id="example-text" class="form-control" type="text" name="example-text" v-model="exampleText" />
+							</fieldset>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="position-absolute end-0 me-3">
+				<button id="displayOptionsHeading" class="btn btn-light btn-outline-dark rounded-circle shadow-sm collapsed" style="height: 48px; width:48px " type="button" data-bs-toggle="collapse" data-bs-target="#displayOptionsCollapse" aria-expanded="false" aria-controls="displayOptionsCollapse">🛠️</button>
+			</div>
+		</div>
+	</div>
 	<!-- Add color -->
     <div class="row mb-5">
 		<AddColor @add-color="addColor" />
@@ -12,61 +123,6 @@
 				</div>
 				<div class="col-auto text-end">
 					<button class="btn btn-light btn-outline-info mb-1" @click="copyTable('current-colors-table')" :disabled="!colors.length" title="Copy table" >📋</button>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-12 mb-3">
-					<div class="accordion" id="accordionDisplayOptions">
-						<div class="accordion-item">
-							<h2 class="accordion-header" id="displayOptionsHeading">
-								<button class="accordion-button collapsed me-2" type="button" data-bs-toggle="collapse" data-bs-target="#displayOptionsCollapse" aria-expanded="false" aria-controls="displayOptionsCollapse">
-									Display options
-								</button>
-							</h2>
-							<div id="displayOptionsCollapse" class="accordion-collapse collapse" aria-labelledby="displayOptionsHeading" data-bs-parent="#accordionDisplayOptions">
-								<div class="accordion-body">
-									<form class="form row" @submit.prevent>
-										<div class="col-auto">
-											<div class="form-check">
-												<input class="form-check-input" type="checkbox" value="" id="showRGB" v-model="displayOptions.showRGB">
-												<label class="form-check-label" for="showRGB">
-													Show RGB
-												</label>
-											</div>
-											<div class="form-check">
-												<input class="form-check-input" type="checkbox" value="" id="showSample" v-model="displayOptions.showSample">
-												<label class="form-check-label" for="showSample">
-													Show Sample
-												</label>
-											</div>
-											<div class="form-check">
-												<input class="form-check-input" type="checkbox" value="" id="showLum" v-model="displayOptions.showLum">
-												<label class="form-check-label" for="showLum">
-													Show Luminosity
-												</label>
-											</div>
-										</div>
-										<div class="col-auto">
-											<div class="form-check">
-												<input class="form-check-input" type="checkbox" value="" id="palette" v-model="displayOptions.palette">
-												<label class="form-check-label" for="palette">
-													Palette mode
-												</label>
-											</div>
-										</div>
-										<div class="col-auto">
-											<div class="form-check">
-												<input class="form-check-input" type="checkbox" value="" id="readOnly" v-model="displayOptions.readOnly">
-												<label class="form-check-label" for="readOnly">
-													Read only
-												</label>
-											</div>
-										</div>										
-									</form>
-								</div>
-							</div>
-						</div>
-					</div>
 				</div>
 			</div>
 			<div v-if="colors.length == 0">
@@ -114,95 +170,6 @@
 					<button class="btn btn-light btn-outline-info mb-1" @click="copyTable('contrast-matrix-table')" :disabled="colors.length < 2" title="Copy table" >📋</button>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-12 mb-3">
-					<div class="accordion" id="accordionContrastOptions">
-						<div class="accordion-item">
-							<h2 class="accordion-header" id="contrastOptionsHeading">
-								<button class="accordion-button collapsed me-2" type="button" data-bs-toggle="collapse" data-bs-target="#contrastOptionsCollapse" aria-expanded="false" aria-controls="contrastOptionsCollapse">
-									Contrast table options
-								</button>
-							</h2>
-							<div id="contrastOptionsCollapse" class="accordion-collapse collapse" aria-labelledby="contrastOptionsHeading" data-bs-parent="#accordionContrastOptions">
-								<div class="accordion-body">
-									<form class="form row" @submit.prevent >
-										<div class="col-auto">
-											<div class="form-check">
-												<input class="form-check-input" type="checkbox" value="" id="showHex" v-model="displayOptions.showHex">
-												<label class="form-check-label" for="showHex">
-													Show Hex on Table
-												</label>
-											</div>
-											<div class="form-check">
-												<input class="form-check-input" type="checkbox" value="" id="APCA" v-model="displayOptions.apca">
-												<label class="form-check-label" for="APCA">
-													APCA standards
-												</label>
-											</div>
-										</div>
-										<div class="col-auto" v-if="displayOptions.apca == false">
-											<div class="form-check">
-												<input class="form-check-input" type="radio" value="AAA" id="AAA" v-model="wcagLevel">
-												<label class="form-check-label" for="AAA">
-													Success Level AAA
-												</label>
-											</div>
-											<div class="form-check">
-												<input class="form-check-input" type="radio" value="AA" id="AA" v-model="wcagLevel">
-												<label class="form-check-label" for="AA">
-													Success Level AA
-												</label>
-											</div>
-											<div class="form-check">
-												<input class="form-check-input" type="radio" value="A" id="A" v-model="wcagLevel">
-												<label class="form-check-label" for="A">
-													Success Level A
-												</label>
-											</div>
-										</div>
-										<div class="col-2" v-if="displayOptions.apca == false">
-											<fieldset :disabled="resultsRendering == 'renderResults'" class="form-check">
-												<input class="form-check-input" type="checkbox" value="" id="showValues" v-model="displayOptions.showValues">
-												<label class="form-check-label" for="showValues">
-													Show Values
-												</label>
-											</fieldset>
-											<fieldset :disabled="resultsRendering == 'renderResults'" class="form-check" >
-												<label for="example-text" class="form-label">Level of Accuracy</label>
-												<input id="example-text" class="form-control" type="number" min="1" name="levelOfAccuracy" v-model="levelOfAccuracy" />
-											</fieldset>
-										</div>
-										<div class="col-auto">
-											<div class="form-check">
-												<input class="form-check-input" type="radio" value="colorizeResults" id="colorizeResults" v-model="resultsRendering">
-												<label class="form-check-label" for="colorizeResults">
-													Colorize results
-												</label>
-											</div>
-											<div class="form-check">
-												<input class="form-check-input" type="radio" value="defaultResults" id="defaultResults" v-model="resultsRendering">
-												<label class="form-check-label" for="defaultResults">
-													B & W results
-												</label>
-											</div>
-											<div class="form-check">
-												<input class="form-check-input" type="radio" value="renderResults" id="renderResults" v-model="resultsRendering" :disabled="displayOptions.showValues">
-												<label class="form-check-label" for="renderResults">
-													Render results
-												</label>
-											</div>
-										</div>
-										<fieldset class="col" :disabled="resultsRendering !== 'renderResults'">
-											<label for="example-text" class="form-label">Example Text</label>
-											<input id="example-text" class="form-control" type="text" name="example-text" v-model="exampleText" />
-										</fieldset>
-									</form>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
 			<div style="overflow-x:auto;" v-if="colors.length >= 2">
 				<table id="contrast-matrix-table" ref="contrast" class="table table-bordered table-assist">
 					<thead>
@@ -217,14 +184,13 @@
 						<tr v-for="(colorCol) in colors" :key="colorCol.id">
 							<th style="text-align: left;"><div style="display:inline-flex; justify-content:space-between; width:100%">{{ colorCol.colorName }} <span v-if="displayOptions.showSample" style="padding-left:3px" :style="{ color: '#' + colorCol.colorHex }">■</span></div> <span class="text-muted" style="font-weight:normal" v-if="displayOptions.showHex"> <br> #{{ colorCol.colorHex }}</span></th>
 							<template v-for="(colorRow) in colors" :key="colorRow.id">
-								<td v-if="resultsRendering == 'renderResults'" :style="{ color: '#' + colorCol.colorHex, background: '#' + colorRow.colorHex}">
+								<td v-if="displayOptions.resultsRendering == true" :style="{ color: '#' + colorCol.colorHex, background: '#' + colorRow.colorHex}">
 									<template v-if="displayOptions.apca == false">
 											{{ calculateContrast(colorCol.colorLum, colorRow.colorLum) }}
 									</template>
 									<template v-else>
 											{{ apcaContrast(colorCol.colorHex,colorRow.colorHex) }}
 									</template>
-									{{ exampleText }}
 								</td>
 								<template v-else>
 									<template v-if="displayOptions.apca == false">
@@ -252,9 +218,47 @@
     <div class="row mb-5">
 		<SuccessLevels :displayOptions="displayOptions" />
 	</div>
+	<!-- Rendered sample -->
+    <div class="row mb-5">
+        <div class="col-12">
+			<div class="row justify-content-between">
+				<div class="col-auto">
+					<h2 class="">Rendered Sample</h2>
+				</div>
+				<div class="col-auto text-end">
+					<button class="btn btn-light btn-outline-warning mb-1 me-2" type="button" data-bs-toggle="collapse" data-bs-target="#rendered-sample-content" aria-expanded="false" aria-controls="rendered-sample-content" :disabled="colors.length < 2" title="Toggle collapse rendered sample">👁️</button>
+					<button class="btn btn-light btn-outline-info mb-1" @click="copyTable('rendered-sample-table')" :disabled="colors.length < 2" title="Copy table" >📋</button>
+				</div>
+			</div>
+			<div class="collapse show" id="rendered-sample-content" style="overflow-x:auto;" v-if="colors.length >= 2">
+				<table id="rendered-sample-table" class="table table-bordered">
+					<tbody>
+						<template v-for="(colorCol) in colors" :key="colorCol.id">
+							<tr v-for="(colorRow) in colors" :key="colorRow.id" :style="{ color: '#' + colorCol.colorHex, background: '#' + colorRow.colorHex}">
+									<td>
+										<template v-if="displayOptions.apca == false">
+												{{ calculateContrast(colorCol.colorLum, colorRow.colorLum) }}
+										</template>
+										<template v-else>
+												{{ apcaContrast(colorCol.colorHex,colorRow.colorHex) }}
+										</template>
+									</td>
+									<td>
+										{{ exampleText }}
+									</td>
+							</tr>
+						</template>
+					</tbody>
+				</table>
+			</div>
+			<div v-else>
+				<p class="text-muted">Add at least 2 colors to start rendering samples.</p>
+			</div>
+		</div>
+	</div>
 	<!-- Color export -->
 	<div class="row">
-		<ColorExport :data="colors" :resultsRendering="resultsRendering" @load-data="loadData"/>
+		<ColorExport :data="colors" @load-data="loadData"/>
 	</div>
 </template>
 
@@ -285,9 +289,9 @@ export default {
 				palette: false,
 				readOnly: false,
 				apca: false,
+				resultsRendering: true,
 			},
 			wcagLevel: 'AA',
-			resultsRendering: "colorizeResults",
 			exampleText: "Lorem Ipsum dolor sit amet",
 			levelOfAccuracy: 3,
 			colors: [],
@@ -373,7 +377,7 @@ export default {
 		},
 		matrixStyles(ratio) {
 			let num = ratio.split(":",1)
-			if (this.resultsRendering == 'colorizeResults') {
+			if (this.displayOptions.resultsRendering == true) {
 				if (num == " " || num == 1) {
 					return { background: '' }
 				} else {
@@ -407,7 +411,7 @@ export default {
 		},
 		apcaStyles(score) {
 			let style = Math.abs(score);
-			if (this.resultsRendering == 'colorizeResults') {
+			if (this.displayOptions.resultsRendering == true) {
 				if (style >= 90) {return { background: '#D4F5EB99'}}
 				else if (style >= 75) {return { background: '#91E4CC99' }}
 				else if (style >= 60) {return { background: '#F3AE5B99' }}
