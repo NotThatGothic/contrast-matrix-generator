@@ -137,6 +137,7 @@
 						<tr>
 							<th style="width:auto">Color name</th>
 							<th style="width:20ex" class="text-center" v-if="displayOptions.showSample">Color sample</th>
+							<th style="width:auto">Color chroma</th>
 							<th style="width:auto">Color hexcode</th>
 							<th v-if="displayOptions.showRGB" style="width:auto">Color RGB value</th>
 							<th style="width:auto" v-if="displayOptions.showLum">Color Lum</th>
@@ -144,7 +145,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr v-for="(color) in colors" :key="color.id" is="vue:ColorRow" :id="color.id" :name="color.colorName" :hex="color.colorHex" :displayOptions="displayOptions" @update-name="updateName" @update-hex="updateHex" @remove-row="removeRow" />
+						<tr v-for="(color) in colors" :key="color.id" is="vue:ColorRow" :id="color.id" :name="color.colorName" :chroma="color.colorChroma" :hex="color.colorHex" :displayOptions="displayOptions" @update-name="updateName" @update-hex="updateHex" @remove-row="removeRow" />
 					</tbody>
 					<tfoot v-if="!displayOptions.readOnly">
 						<tr>
@@ -271,6 +272,8 @@
 
 	import { APCAcontrast, reverseAPCA, sRGBtoY, displayP3toY, adobeRGBtoY, alphaBlend, calcAPCA, fontLookupAPCA } from 'apca-w3';
 	import { colorParsley, colorToHex, colorToRGB } from 'colorparsley';  // optional string parsing
+	import chroma from "chroma-js";
+
 export default {
 	name: 'ContrastMatrix',
 	mounted() {
@@ -334,6 +337,7 @@ export default {
 			this.colors.push({
 				id: this.nextId,
 				colorName: newColorName,
+				colorChroma: chroma(newColorHex),
 				colorHex: standardizeHex(newColorHex),
 				colorRGB: hexToRGB(newColorHex),
 				colorLum: calculateLum(hexToRGB(newColorHex).r,hexToRGB(newColorHex).g,hexToRGB(newColorHex).b),

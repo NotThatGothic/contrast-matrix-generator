@@ -10,6 +10,8 @@
     "dependencies": {
         "apca-w3": "^0.1.9",
         "bootstrap": "^5.2.0",
+        "chroma-js": "^2.4.2",
+        "colorjs.io": "^0.4.5",
         "gh-pages": "^4.0.0",
         "stylus": "^0.58.1",
         "vue": "^3.2.37"

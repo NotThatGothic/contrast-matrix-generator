@@ -84,6 +84,7 @@ export default {
 		id: Number, 
 		name: String,
 		hex: String,
+		chroma: String,
 		displayOptions: Object,
 	},
 	data() {
