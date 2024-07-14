@@ -1,5 +1,5 @@
 <template>
-	<div class="fixed-top">
+		<div class="fixed-top container">
 		<div class="accordion" id="accordionDisplayOptions">
 			<div class="accordion-body">
 				<div id="displayOptionsCollapse" class="accordion-collapse collapse bg-white border border-primary shadow-sm" aria-labelledby="displayOptionsHeading" data-bs-parent="#accordionDisplayOptions">
@@ -19,39 +19,40 @@
 									</label>
 								</div>
 								<div class="form-check form-switch">
-									<input class="form-check-input" type="checkbox" value="" id="showRGB" v-model="displayOptions.showRGB">
-									<label class="form-check-label" for="showRGB">
-										Show RGB value
-									</label>
-								</div>								
-								<div class="form-check form-switch">
-									<input class="form-check-input" type="checkbox" value="" id="showLum" v-model="displayOptions.showLum">
-									<label class="form-check-label" for="showLum">
-										Show Luminosity
-									</label>
-								</div>
-							</div>
-							<div class="col-auto">
-								<div class="form-check form-switch">
 									<input class="form-check-input" type="checkbox" value="" id="resultsRendering" v-model="displayOptions.resultsRendering">
 									<label class="form-check-label" for="resultsRendering">
-										Color results
+										 Style table 
 									</label>
 								</div>
 								<div class="form-check form-switch">
 									<input class="form-check-input" type="checkbox" value="" id="showSample" v-model="displayOptions.showSample">
 									<label class="form-check-label" for="showSample">
-										Show Sample
+										Show sample
 									</label>
 								</div>
+							</div>
+							<div class="col-auto">
+								<div class="form-check form-switch">
+									<input class="form-check-input" type="checkbox" value="" id="showRGB" v-model="displayOptions.showRGB">
+									<label class="form-check-label" for="showRGB">
+										Show RGB value
+									</label>
+								</div>
+								
 								<div class="form-check form-switch">
 									<input class="form-check-input" type="checkbox" value="" id="showHex" v-model="displayOptions.showHex">
 									<label class="form-check-label" for="showHex">
-										Show Hex
+										Show HEX value
 									</label>
-								</div>						
+								</div>
+								<div class="form-check form-switch">
+									<input class="form-check-input" type="checkbox" value="" id="showLum" v-model="displayOptions.showLum">
+									<label class="form-check-label" for="showLum">
+										Show luminosity
+									</label>
+								</div>				
 							</div>
-							<div class="col">
+							<div class="col-4">
 								<div class="form-check form-switch">
 									<input class="form-check-input" type="checkbox" value="" id="APCA" v-model="displayOptions.apca">
 									<label class="form-check-label" for="APCA">
@@ -59,7 +60,7 @@
 									</label>
 								</div>
 								<div class="row">
-									<div class="col-auto">
+									<div class="col">
 										<fieldset :disabled="displayOptions.apca == true">
 											<div class="form-check">
 												<input class="form-check-input" type="radio" value="AAA" id="AAA" v-model="wcagLevel">
@@ -90,7 +91,7 @@
 										</fieldset>
 										<fieldset :disabled="displayOptions.apca == true | (displayOptions.showValues == false)" >
 											<div class="input-group">
-												<span for="level-of-accuracy" class="input-group-text">Level of Accuracy</span>
+												<span for="level-of-accuracy" class="input-group-text">Accuracy</span>
 												<input id="level-of-accuracy" class="form-control" type="number" min="1" name="levelOfAccuracy" v-model="levelOfAccuracy" />
 											</div>
 										</fieldset>
@@ -105,8 +106,8 @@
 					</div>
 				</div>
 			</div>
-			<div class="position-absolute end-0 me-3">
-				<button id="displayOptionsHeading" class="btn btn-light btn-outline-dark rounded-circle shadow-sm collapsed" style="height: 48px; width:48px " type="button" data-bs-toggle="collapse" data-bs-target="#displayOptionsCollapse" aria-expanded="false" aria-controls="displayOptionsCollapse">🛠️</button>
+			<div class="position-absolute end-0 top-0 mt-3" style="margin-right: -2.5rem !important;">
+				<button id="displayOptionsHeading" class="btn btn-light btn-outline-primary rounded-circle shadow-sm collapsed" style="height: 48px; width:48px " type="button" data-bs-toggle="collapse" data-bs-target="#displayOptionsCollapse" aria-expanded="false" aria-controls="displayOptionsCollapse">🛠️</button>
 			</div>
 		</div>
 	</div>
@@ -184,15 +185,6 @@
 						<tr v-for="(colorCol) in colors" :key="colorCol.id">
 							<th style="text-align: left;"><div style="display:inline-flex; justify-content:space-between; width:100%">{{ colorCol.colorName }} <span v-if="displayOptions.showSample" style="padding-left:3px" :style="{ color: '#' + colorCol.colorHex }">■</span></div> <span class="text-muted" style="font-weight:normal" v-if="displayOptions.showHex"> <br> #{{ colorCol.colorHex }}</span></th>
 							<template v-for="(colorRow) in colors" :key="colorRow.id">
-								<td v-if="displayOptions.resultsRendering == true" :style="{ color: '#' + colorCol.colorHex, background: '#' + colorRow.colorHex}">
-									<template v-if="displayOptions.apca == false">
-											{{ calculateContrast(colorCol.colorLum, colorRow.colorLum) }}
-									</template>
-									<template v-else>
-											{{ apcaContrast(colorCol.colorHex,colorRow.colorHex) }}
-									</template>
-								</td>
-								<template v-else>
 									<template v-if="displayOptions.apca == false">
 										<td :style="matrixStyles(calculateContrast(colorCol.colorLum, colorRow.colorLum))">
 											{{ calculateContrast(colorCol.colorLum, colorRow.colorLum) }}
@@ -204,7 +196,6 @@
 										</td>
 									</template>
 								</template>
-							</template>
 						</tr>
 					</tbody>
 				</table>
@@ -223,7 +214,7 @@
         <div class="col-12">
 			<div class="row justify-content-between">
 				<div class="col-auto">
-					<h2 class="">Rendered Sample</h2>
+					<h2 class="">Rendered sample</h2>
 				</div>
 				<div class="col-auto text-end">
 					<button class="btn btn-light btn-outline-warning mb-1 me-2" type="button" data-bs-toggle="collapse" data-bs-target="#rendered-sample-content" aria-expanded="false" aria-controls="rendered-sample-content" :disabled="colors.length < 2" title="Toggle collapse rendered sample">👁️</button>
@@ -234,7 +225,13 @@
 				<table id="rendered-sample-table" class="table table-bordered">
 					<tbody>
 						<template v-for="(colorCol) in colors" :key="colorCol.id">
+							<tr>
+								<th> 
+									{{ colorCol.colorName }} 
+									<span v-if="displayOptions.showSample" style="padding-left:3px" :style="{ color: '#' + colorCol.colorHex }">■</span> </th>
+							</tr>
 							<tr v-for="(colorRow) in colors" :key="colorRow.id" :style="{ color: '#' + colorCol.colorHex, background: '#' + colorRow.colorHex}">
+								<template v-if="colorCol.colorLum !== colorRow.colorLum">
 									<td>
 										<template v-if="displayOptions.apca == false">
 												{{ calculateContrast(colorCol.colorLum, colorRow.colorLum) }}
@@ -246,6 +243,7 @@
 									<td>
 										{{ exampleText }}
 									</td>
+								</template>
 							</tr>
 						</template>
 					</tbody>
@@ -383,23 +381,23 @@ export default {
 				} else {
 					if (this.wcagLevel == 'AAA') {
 						if (num >= 7) {
-							return { background: '#0f03' }
+							return { background: '#0f03', fontWeight: 'bold' }
 						}	else if (num >= 4.5) {
-							return { background: '#ff03' }
+							return { background: '#ff03', fontWeight: 'bold' }
 						}	else {
 							return { background: '#f113' }
 						}
 					} else if (this.wcagLevel == 'AA') {
 						if (num >= 4.5) {
-							return { background: '#0f03' }
+							return { background: '#0f03', fontWeight: 'bold' }
 						}	else if (num >= 3) {
-							return { background: '#ff03' }
+							return { background: '#ff03', fontWeight: 'bold' }
 						}	else {
 							return { background: '#f113' }
 						}
 					} else {
 						if (num >= 3) {
-							return { background: '#0f03' }
+							return { background: '#0f03', fontWeight: 'bold' }
 						}   else {
 							return { background: '#f113' }
 						}
@@ -412,13 +410,13 @@ export default {
 		apcaStyles(score) {
 			let style = Math.abs(score);
 			if (this.displayOptions.resultsRendering == true) {
-				if (style >= 90) {return { background: '#D4F5EB99'}}
-				else if (style >= 75) {return { background: '#91E4CC99' }}
-				else if (style >= 60) {return { background: '#F3AE5B99' }}
-				else if (style >= 45) {return { background: '#EB8F0099' }}
-				else if (style >= 30) {return { background: '#E3606C99' }}
-				else if (style >= 15) {return { background: '#D4334399' }}
-				else if (style >= 1) {return { background: '#eeeeee99' }}
+					 if (style >= 90) {return { background: '#D4F5EB99', fontWeight: 'bold' }}
+				else if (style >= 75) {return { background: '#91E4CC99', fontWeight: 'bold' }}
+				else if (style >= 60) {return { background: '#F3AE5B99', fontWeight: 'bold' }}
+				else if (style >= 45) {return { background: '#EB8F0099', fontWeight: 'bold' }}
+				else if (style >= 30) {return { background: '#E3606C99', fontWeight: 'bold' }}
+				else if (style >= 15) {return { background: '#D4334399', fontWeight: 'bold' }}
+				else if (style >= 1)  {return { background: '#eeeeee99' }}
 				else {return { background: '' }}
 			}
 		},
